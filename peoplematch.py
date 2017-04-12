@@ -56,7 +56,8 @@ def processName(s):
 
 e = 0
 ne = 0
-sel = 0
+sel = 1
+# 0 for CAPMCA 1 for BSEMCA
 params = [['allleven.csv', 'upper', 'cname', 'pid', 'pid', 'capPmat.csv'],
 ['bsePpos.csv', 'bname', 'mpname', 'bseid', 'compID', 'bsePmat.csv']]
 c = pd.read_csv(params[sel][0])  # 'allleven.csv' 'bsePpos.csv'
@@ -84,9 +85,9 @@ with open(params[sel][5], 'w') as f:
         if n == m:
             e += 1
             # 'pid' 'bseid'
-            wf.writerow({'din':mcadin[i], 'mcaPname':mcaname[i], 'pid':id[i], 'upper':newname[i], 'cin':mcacin[i]})
+            wf.writerow({'din':mcadin[i], 'mcaPname':mcaname[i], params[sel][4]:id[i], 'upper':newname[i], 'cin':mcacin[i]})
         elif em.compare(n, m) or em.leven(n_sl, m_sl) < 2 or fwf.partial_ratio(n_sl,m_sl) == 100:
             ne +=1
             # 'pid' 'bseid'
-            wf.writerow({'din':mcadin[i], 'mcaPname':mcaname[i], 'pid':id[i], 'upper':newname[i], 'cin':mcacin[i]})
+            wf.writerow({'din':mcadin[i], 'mcaPname':mcaname[i], params[sel][4]:id[i], 'upper':newname[i], 'cin':mcacin[i]})
 print(i+1, e, ne, e+ne)
