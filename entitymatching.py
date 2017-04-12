@@ -264,8 +264,13 @@ def compare(s1, s2, checkCT = 1):
     # special case - need another flag for atleast 1 exact match
     while i < len(wmin):
         if i == 0:
-            if CT(wmin[0], wmax[0], 1) or (wmin[0][0] == wmax[0][0] and (len(wmin[0]) == 1 or len(wmax[0]) == 1)):
+            if CT(wmin[i], wmax[i], 1) or (wmin[i][0] == wmax[i][0] and (len(wmin[i]) == 1 or len(wmax[i]) == 1)):
                 # print(wmin[0][0], wmax[0][0], (wmin[0][0] == wmax[0][0]))
+                i += 1
+                continue
+            # might get extra correct but may be error rate may increase
+            elif wmin[i][0] == wmax[i][0] and fwf.partial_ratio(wmin[i], wmax[i])==100:
+                 # print(s1, s2)
                 i += 1
                 continue
             else:
@@ -273,14 +278,15 @@ def compare(s1, s2, checkCT = 1):
         flag = False
         while j < len(wmax):
             try:
-                if CT(wmin[i], wmax[j], 1) or (wmin[i][0] == wmax[j][0] and (len(wmin[i]) == 1 or len(wmax[j]) == 1)):
+                if CT(wmin[i], wmax[j], 1) or (wmin[i][0] == wmax[j][0] and (len(wmin[i]) == 1 or len(wmax[j]) == 1 or fwf.partial_ratio(wmin[i], wmax[j])==100)):
                     flag = True
                     j += 1
                     break
                 else:
                     j += 1
-            except:
-                print(wmin, wmax, wmin[i], wmax[j])
+            except e:
+                print("Got issue", str(e), wmin, wmax, wmin[i], wmax[j])
+                exit(0)
         if not flag and j == len(wmax) and i < len(wmin):
             return False
         i += 1
@@ -317,6 +323,7 @@ if __name__ == '__main__':
     print(compare("aditya guru", "aditya b"))
     print(compare("aditya kumar guru", "aditya b"))
     print(compare("bditya guru", "aditya b"))
+    print(compare("JOSPEH VARGHESE", "JOSEPH VARGHESE"))
     print(processString("Payal Electronics(P)"))
     print(processString('Deepak Fertilizers & Petrochemicals Corp Ltd'))
     print(removeHashNSpace("Pay & Go #P #L"))

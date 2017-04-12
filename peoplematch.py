@@ -5,6 +5,11 @@ import csv
 import re
 
 def processName(s):
+    s = s.upper()
+    s = s.replace("KU.", "KUMAR")
+    s = s.replace(" KU ", " KUMAR ")
+    s = s.replace("KR.", "KUMAR")
+    s = s.replace("NWAR", "WAR")
     s = re.sub('[\.\;\,\:]', ' ', s)
     s = s.replace('DUTTA', 'DATTA')
     s = s.replace('OU', 'AU')
@@ -37,7 +42,7 @@ def processName(s):
     s = s.replace('BH', 'B')
     s = s.replace('GH', 'G')
     # first H then any of the above consonants also
-    s = s.replace('PH', 'F')
+    s = s.replace('F', 'PH')
     s = s.replace('X', 'KS')
     #s = s.replace('EI', 'I')
     #s = s.replace('IE', 'I')
@@ -51,14 +56,20 @@ def processName(s):
 
 e = 0
 ne = 0
-c = pd.read_csv('allleven.csv')
-newname = c['upper']
-mcaname = c['cname']
+sel = 0
+params = [['allleven.csv', 'upper', 'cname', 'pid', 'pid', 'capPmat.csv'],
+['bsePpos.csv', 'bname', 'mpname', 'bseid', 'compID', 'bsePmat.csv']]
+c = pd.read_csv(params[sel][0])  # 'allleven.csv' 'bsePpos.csv'
+newname = c[params[sel][1]]  # 'upper' 'bname'
+mcaname = c[params[sel][2]]  # 'cname' 'mpname'
 mcadin = c['din']
 mcacin = c['cin']
+id = c[params[sel][3]]  # 'pid' 'bseid'
 print(c.shape[0])
-fnm = ['din', 'mcapname', 'upper', 'cin']
-with open('mat.csv', 'w') as f:
+fnm = ['din', 'mcaPname', params[sel][4], 'upper', 'cin']
+# 'pid' 'compID'
+# 'capPmat.csv' 'bsePmat.csv'
+with open(params[sel][5], 'w') as f:
     wf = csv.DictWriter(f, delimiter=',', fieldnames=fnm)
     wf.writeheader()
     for i in range(c.shape[0]):
@@ -72,8 +83,10 @@ with open('mat.csv', 'w') as f:
         m_sl = m.replace(' ', '')
         if n == m:
             e += 1
-            wf.writerow({'din':mcadin[i], 'mcapname':mcaname[i], 'upper':newname[i], 'cin':mcacin[i]})
+            # 'pid' 'bseid'
+            wf.writerow({'din':mcadin[i], 'mcaPname':mcaname[i], 'pid':id[i], 'upper':newname[i], 'cin':mcacin[i]})
         elif em.compare(n, m) or em.leven(n_sl, m_sl) < 2 or fwf.partial_ratio(n_sl,m_sl) == 100:
             ne +=1
-            wf.writerow({'din':mcadin[i], 'mcapname':mcaname[i], 'upper':newname[i], 'cin':mcacin[i]})
-print(i, e, ne, e+ne)
+            # 'pid' 'bseid'
+            wf.writerow({'din':mcadin[i], 'mcaPname':mcaname[i], 'pid':id[i], 'upper':newname[i], 'cin':mcacin[i]})
+print(i+1, e, ne, e+ne)
